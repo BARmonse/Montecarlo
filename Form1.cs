@@ -12,17 +12,20 @@ namespace Montecarlo
 {
     public partial class Form1 : Form
     {
-        DataTable table;
+        GestorProyectos gestor;
 
         int cant;
-        int limInferiorAct1;
-        int limSuperiorAct1;
-        int limInferiorAct2;
-        int limSuperiorAct2;
-        int mediaAct3;
-        int limInferiorAct4;
-        int limSuperiorAct4;
-        int mediaAct5;
+        int desde;
+        int hasta;
+
+        double limInferiorAct1;
+        double limSuperiorAct1;
+        double limInferiorAct2;
+        double limSuperiorAct2;
+        double mediaAct3;
+        double limInferiorAct4;
+        double limSuperiorAct4;
+        double mediaAct5;
 
         public Form1()
         {
@@ -32,38 +35,36 @@ namespace Montecarlo
         private void tomarDatos()
         {
             cant = int.Parse(cantidad.Text);
-            limInferiorAct1 = int.Parse(limInferiorActividad1.Text);
-            limSuperiorAct1 = int.Parse(limSuperiorActividad1.Text);
-            limInferiorAct2 = int.Parse(limInferiorActividad2.Text);
-            limSuperiorAct2 = int.Parse(limSuperiorActividad2.Text);
-            mediaAct3 = int.Parse(mediaActividad3.Text);
-            limInferiorAct4 = int.Parse(limInferiorActividad4.Text);
-            limSuperiorAct4 = int.Parse(limSuperiorActividad4.Text);
-            mediaAct5 = int.Parse(mediaActividad5.Text);
+            desde = int.Parse(mostrarDesde.Text);
+            hasta = int.Parse(mostrarHasta.Text);
+
+            limInferiorAct1 = double.Parse(limInferiorActividad1.Text);
+            limSuperiorAct1 = double.Parse(limSuperiorActividad1.Text);
+            limInferiorAct2 = double.Parse(limInferiorActividad2.Text);
+            limSuperiorAct2 = double.Parse(limSuperiorActividad2.Text);
+            mediaAct3 = double.Parse(mediaActividad3.Text);
+            limInferiorAct4 = double.Parse(limInferiorActividad4.Text);
+            limSuperiorAct4 = double.Parse(limSuperiorActividad4.Text);
+            mediaAct5 = double.Parse(mediaActividad5.Text);
         }
 
-        private void crearTabla()
+        private void btnGenerar_Click(object sender, EventArgs e)
         {
-            table = new DataTable();
-            table.Clear();
+            tomarDatos();
+            gestor = new GestorProyectos(this);
+            gestor.simular(cant, limInferiorAct1, limSuperiorAct1, limInferiorAct2, limSuperiorAct2, mediaAct3, limInferiorAct4, limSuperiorAct4, mediaAct5, desde, hasta);
+        }
 
-            table.Columns.Add("Proyecto");
-            table.Columns.Add("RND");
-            table.Columns.Add("Duración actividad1");
-            table.Columns.Add("RND");
-            table.Columns.Add("Duración actividad2");
-            table.Columns.Add("RND");
-            table.Columns.Add("Duración actividad3");
-            table.Columns.Add("RND");
-            table.Columns.Add("Duración actividad4");
-            table.Columns.Add("Finalización actividad4");
-            table.Columns.Add("RND");
-            table.Columns.Add("Duración actividad5");
-            table.Columns.Add("Finalización actividad5");
-            table.Columns.Add("Tiempo Total");
-            table.Columns.Add("Tiempo promedio");
-            table.Columns.Add("Maximo tiempo total");
-            table.Columns.Add("Minimo tiempo total");
+        public void mostrarRango(DataTable tablaRango)
+        {
+            ResultadosTablaRango resultados = new ResultadosTablaRango();
+            resultados.mostrarRango(tablaRango);
+            resultados.Show();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

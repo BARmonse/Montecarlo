@@ -1,4 +1,5 @@
 ﻿using Montecarlo.Soporte;
+using Montecarlo.Soporte.Graficador;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -12,8 +13,8 @@ namespace Montecarlo
     {
         private double[] lineaAnterior;
         private double[] lineaActual;
-        private int[] proyectos;
-        private double[] tiemposPromiedos;
+        private List<int> proyectos;
+        private List<double> tiemposPromiedos;
 
         Form1 pantalla;
         private Truncador truncador;
@@ -24,12 +25,14 @@ namespace Montecarlo
         public GestorProyectos(Form1 pantalla)
         {
             this.pantalla = pantalla;
-            this.lineaAnterior = new double[23];
-            this.lineaActual = new double[23];
+            this.lineaAnterior = new double[24];
+            this.lineaActual = new double[24];
             this.truncador = new Truncador(2);
             this.generadorAleatorios = new GeneradorLenguaje(truncador);
             this.tablaResultados = new DataTable();
             this.tablaRango = new DataTable();
+            this.proyectos = new List<int>();
+            this.tiemposPromiedos = new List<double>();
             crearTabla(tablaRango);
             //crearTabla(tablaResultados);
         }
@@ -59,12 +62,14 @@ namespace Montecarlo
             tabla.Columns.Add("Maxima duración");//lineaActual[21]
             tabla.Columns.Add("Minima duración");
             tabla.Columns.Add("Contador proyectos < 45");
+            tabla.Columns.Add("Probabilidad (%)");
         }
 
         public void simular(int cantidad,double limInferiorAct1,double limSuperiorAct1,double limInferiorAct2,double limSuperiorAct2,double mediaAct3,double limInferiorAct4,double limSuperiorAct4,double mediaAct5, int desde,int hasta)
         {
             procesar(cantidad, limInferiorAct1, limSuperiorAct1, limInferiorAct2, limSuperiorAct2, mediaAct3, limInferiorAct4, limSuperiorAct4, mediaAct5, desde,hasta);
             mostrarRango();
+            graficarTiempoPromedio();
         }
 
         private void procesar(int cantidad, double limInferiorAct1, double limSuperiorAct1, double limInferiorAct2, double limSuperiorAct2, double mediaAct3, double limInferiorAct4, double limSuperiorAct4, double mediaAct5, int desde, int hasta)
@@ -88,7 +93,7 @@ namespace Montecarlo
             double tiempoAcumulado;
             double tiempoPromedio;
             int contador = 0;
-
+            double probabilidad;
             double max;
             double min;
 
@@ -99,7 +104,7 @@ namespace Montecarlo
                 // Número de proyecto
                 proyecto = i;
                 lineaActual[0] = proyecto;
-                //proyectos.Append(proyecto);
+                proyectos.Add(proyecto);
 
                 //RND de la actividad 1
                 rnd1 = generadorAleatorios.obtenerAleatorio();
@@ -167,7 +172,7 @@ namespace Montecarlo
                 //Tiempo promedio de tarea de ensamble
                 tiempoPromedio = tiempoAcumulado / i;
                 lineaActual[19] = tiempoPromedio;
-                //tiemposPromiedos.Append(tiempoPromedio);
+                tiemposPromiedos.Add(tiempoPromedio);
 
                 //Máximo y Minimo
                 if (i == 1)
@@ -190,6 +195,10 @@ namespace Montecarlo
                     contador += 1;
                 }
                 lineaActual[22] = contador;
+
+                //Probabilidad de que el proyecto dure menos de 45 días
+                probabilidad = contador * 100 / i;
+                lineaActual[23] = probabilidad;
 
                 //Guardamos la linea actual antes de pasar a la siguiente iteración
                 lineaAnterior = lineaActual;
@@ -226,6 +235,14 @@ namespace Montecarlo
         private void mostrarRango()
         {
             pantalla.mostrarRango(tablaRango);
+        }
+
+        private void graficarTiempoPromedio()
+        {
+            Graficador graficador = new Graficador();
+            graficador.proyectos = this.proyectos.ToArray();
+            graficador.tiemposPromedios = this.tiemposPromiedos.ToArray();
+            graficador.Show();
         }
     }
 }

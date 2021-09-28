@@ -51,6 +51,11 @@ namespace Montecarlo
         private void btnGenerar_Click(object sender, EventArgs e)
         {
             tomarDatos();
+            if (limInferiorAct1 < 0 || limSuperiorAct1 < 0 || limInferiorAct1 >= limSuperiorAct1 ||
+                limInferiorAct2 < 0 || limSuperiorAct2 < 0 || limInferiorAct2 >= limSuperiorAct2 ||
+                limInferiorAct4 < 0 || limSuperiorAct4 < 0 || limInferiorAct4 >= limSuperiorAct4 || 
+                mediaAct3 <= 0 || mediaAct5 <= 0 || desde < 0 || desde >= hasta) { return; }
+
             gestor = new GestorProyectos(this);
             gestor.simular(cant, limInferiorAct1, limSuperiorAct1, limInferiorAct2, limSuperiorAct2, mediaAct3, limInferiorAct4, limSuperiorAct4, mediaAct5, desde, hasta);
         }

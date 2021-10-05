@@ -20,8 +20,8 @@ namespace Montecarlo
         Form1 pantalla;
         private Truncador truncador;
         private GeneradorLenguaje generadorAleatorios;
-        private DataTable tablaResultados;
         private DataTable tablaRango;
+        private DataTable tablaUltimosProyectos;
 
         public GestorProyectos(Form1 pantalla)
         {
@@ -30,12 +30,12 @@ namespace Montecarlo
             this.lineaActual = new double[80];
             this.truncador = new Truncador(2);
             this.generadorAleatorios = new GeneradorLenguaje(truncador);
-            this.tablaResultados = new DataTable();
             this.tablaRango = new DataTable();
+            this.tablaUltimosProyectos = new DataTable();
             this.proyectos = new List<int>();
             this.tiemposPromiedos = new List<double>();
             crearTabla(tablaRango);
-            //crearTabla(tablaResultados);
+            crearTabla(tablaUltimosProyectos);
         }
 
         private void crearTabla(DataTable tabla)
@@ -208,7 +208,7 @@ namespace Montecarlo
 
             DataRow row;
 
-            for (int i = 1; i < cantidad; i++)
+            for (int i = 1; i <= cantidad; i++)
             {
                 // Número de proyecto
                 proyecto = i;
@@ -445,6 +445,8 @@ namespace Montecarlo
                 //Guardamos la linea actual antes de pasar a la siguiente iteración
                 lineaAnterior = lineaActual;
 
+
+                //Arma la tabla con rangos Desde y Hasta
                 if (i >= desde && i <= hasta)
                 {
                     row = tablaRango.NewRow();
@@ -453,6 +455,18 @@ namespace Montecarlo
                         row[j] = truncador.truncar(lineaActual[j]);
                     }
                     tablaRango.Rows.Add(row);
+                }
+
+
+                //Arma la tabla que tiene los 2 últimos proyectos
+                if (i >= cantidad-1)
+                {
+                    row = tablaUltimosProyectos.NewRow();
+                    for (int j = 0; j < lineaActual.Length; j++)
+                    {
+                        row[j] = truncador.truncar(lineaActual[j]);
+                    }
+                    tablaUltimosProyectos.Rows.Add(row);
                 }
             }
         }
@@ -481,8 +495,9 @@ namespace Montecarlo
         }
         private void mostrarRango()
         {
-            pantalla.mostrarRango(tablaRango);
+            pantalla.mostrarRango(tablaRango,tablaUltimosProyectos);
         }
+
 
         private double contar(double num, double limInferior, double limSuperior, double contador)
         {

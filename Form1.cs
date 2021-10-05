@@ -60,10 +60,10 @@ namespace Montecarlo
             gestor.simular(cant, limInferiorAct1, limSuperiorAct1, limInferiorAct2, limSuperiorAct2, mediaAct3, limInferiorAct4, limSuperiorAct4, mediaAct5, desde, hasta);
         }
 
-        public void mostrarRango(DataTable tablaRango)
+        public void mostrarRango(DataTable tablaRango,DataTable tablaUltimosProyectos)
         {
             ResultadosTablaRango resultados = new ResultadosTablaRango();
-            resultados.mostrarRango(tablaRango);
+            resultados.mostrarRango(tablaRango,tablaUltimosProyectos);
             resultados.Show();
         }
 

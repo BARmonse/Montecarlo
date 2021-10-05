@@ -17,9 +17,10 @@ namespace Montecarlo
             InitializeComponent();
         }
 
-        public void mostrarRango(DataTable tablaRango)
+        public void mostrarRango(DataTable tablaRango,DataTable tablaUltimosProyectos)
         {
             this.grdRangoResultados.DataSource = tablaRango;
+            this.grdUltimosProyectos.DataSource = tablaUltimosProyectos;
         }
     }
 }

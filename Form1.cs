@@ -71,20 +71,24 @@ namespace Montecarlo
         private void btnGenerar_Click(object sender, EventArgs e)
         {
             tomarDatos();
-            if (desde < 0 || desde >= hasta || cant <=0) { return; }
+            if (desde < 0 || desde >= hasta || cant <= 0) { return; }
             gestor = new GestorProyectos(this);
             this.tomarDistribucionActividad1();
             this.tomarDistribucionActividad2();
             this.tomarDistribucionActividad3();
             this.tomarDistribucionActividad4();
             this.tomarDistribucionActividad5();
-            gestor.simular(cant, desde, hasta);
+            if (hayErrores())
+            {
+                MessageBox.Show("Hay parámetros inválidos.");
+            }
+            else { gestor.simular(cant, desde, hasta); }
         }
 
-        public void mostrarRango(DataTable tablaRango,DataTable tablaUltimosProyectos)
+        public void mostrarRango(DataTable tablaRango, DataTable tablaUltimosProyectos)
         {
             ResultadosTablaRango resultados = new ResultadosTablaRango();
-            resultados.mostrarRango(tablaRango,tablaUltimosProyectos);
+            resultados.mostrarRango(tablaRango, tablaUltimosProyectos);
             resultados.Show();
         }
 
@@ -102,9 +106,6 @@ namespace Montecarlo
             cbActividad4.SelectedItem = distribuciones4[2].ToString();
             cbActividad5.SelectedItem = distribuciones5[0].ToString();
         }
-
-        
-
         private void cbActividad1_SelectedValueChanged(object sender, EventArgs e)
         {
             distribucionActividad1 = cbActividad1.SelectedItem.ToString();
@@ -121,7 +122,6 @@ namespace Montecarlo
                     break;
             }
         }
-
         private void cbActividad2_SelectedValueChanged(object sender, EventArgs e)
         {
             distribucionActividad2 = cbActividad2.SelectedItem.ToString();
@@ -191,7 +191,7 @@ namespace Montecarlo
                     break;
             }
         }
-        
+
         private void mostrarUniforme1()
         {
             gbUniformeActividad1.Visible = true;
@@ -317,15 +317,15 @@ namespace Montecarlo
                 case "uniforme":
                     this.tomarParametrosUniformeActividad1();
                     gestor.tomarDistribucionUniformeActividad1(limInferiorAct1, limSuperiorAct1);
-                break;
+                    break;
                 case "exponencial":
                     this.tomarParametrosExponencialActividad1();
                     gestor.tomarDistribucionExponencialActividad1(mediaExponencialAct1);
                     break;
                 case "normal":
                     this.tomarParametrosNormalActividad1();
-                    gestor.tomarDistribucionNormalActividad1(mediaNormalAct1,desvAct1);
-                break;
+                    gestor.tomarDistribucionNormalActividad1(mediaNormalAct1, desvAct1);
+                    break;
             }
         }
         private void tomarDistribucionActividad2()
@@ -342,8 +342,8 @@ namespace Montecarlo
                     break;
                 case "normal":
                     this.tomarParametrosNormalActividad2();
-                    gestor.tomarDistribucionNormalActividad2(mediaNormalAct2,desvAct2);
-                break;
+                    gestor.tomarDistribucionNormalActividad2(mediaNormalAct2, desvAct2);
+                    break;
             }
         }
         private void tomarDistribucionActividad3()
@@ -360,8 +360,8 @@ namespace Montecarlo
                     break;
                 case "normal":
                     this.tomarParametrosNormalActividad3();
-                    gestor.tomarDistribucionNormalActividad3(mediaNormalAct3,desvAct3);
-                break;
+                    gestor.tomarDistribucionNormalActividad3(mediaNormalAct3, desvAct3);
+                    break;
             }
         }
         private void tomarDistribucionActividad4()
@@ -378,8 +378,8 @@ namespace Montecarlo
                     break;
                 case "normal":
                     this.tomarParametrosNormalActividad4();
-                    gestor.tomarDistribucionNormalActividad4(mediaNormalAct4,desvAct4);
-                break;
+                    gestor.tomarDistribucionNormalActividad4(mediaNormalAct4, desvAct4);
+                    break;
             }
         }
         private void tomarDistribucionActividad5()
@@ -396,39 +396,33 @@ namespace Montecarlo
                     break;
                 case "normal":
                     this.tomarParametrosNormalActividad5();
-                    gestor.tomarDistribucionNormalActividad5(mediaNormalAct5,desvAct5);
-                break;
+                    gestor.tomarDistribucionNormalActividad5(mediaNormalAct5, desvAct5);
+                    break;
             }
         }
 
         private void tomarParametrosUniformeActividad1()
         {
-            if (double.Parse(limInferiorActividad1.Text) < 0 || double.Parse(limSuperiorActividad1.Text) <= 0 || double.Parse(limInferiorActividad1.Text) >= double.Parse(limSuperiorActividad1.Text)) { return; }
             limInferiorAct1 = double.Parse(limInferiorActividad1.Text);
             limSuperiorAct1 = double.Parse(limSuperiorActividad1.Text);
-            
         }
         private void tomarParametrosUniformeActividad2()
         {
-            if (double.Parse(limInferiorActividad2.Text) < 0 || double.Parse(limSuperiorActividad2.Text) <= 0 || double.Parse(limInferiorActividad2.Text) >= double.Parse(limSuperiorActividad2.Text)) { return; }
             limInferiorAct2 = double.Parse(limInferiorActividad2.Text);
             limSuperiorAct2 = double.Parse(limSuperiorActividad2.Text);
         }
         private void tomarParametrosUniformeActividad3()
         {
-            if (double.Parse(limInferiorActividad3.Text) < 0 || double.Parse(limSuperiorActividad3.Text) <= 0 || double.Parse(limInferiorActividad3.Text) >= double.Parse(limSuperiorActividad3.Text)) { return; }
             limInferiorAct3 = double.Parse(limInferiorActividad3.Text);
             limSuperiorAct3 = double.Parse(limSuperiorActividad3.Text);
         }
         private void tomarParametrosUniformeActividad4()
         {
-            if (double.Parse(limInferiorActividad4.Text) < 0 || double.Parse(limSuperiorActividad4.Text) <= 0 || double.Parse(limInferiorActividad4.Text) >= double.Parse(limSuperiorActividad4.Text)) { return; }
             limInferiorAct4 = double.Parse(limInferiorActividad4.Text);
             limSuperiorAct4 = double.Parse(limSuperiorActividad4.Text);
         }
         private void tomarParametrosUniformeActividad5()
         {
-            if (double.Parse(limInferiorActividad5.Text) < 0 || double.Parse(limSuperiorActividad5.Text) <= 0 || double.Parse(limInferiorActividad5.Text) >= double.Parse(limSuperiorActividad5.Text)) { return; }
             limInferiorAct5 = double.Parse(limInferiorActividad5.Text);
             limSuperiorAct5 = double.Parse(limSuperiorActividad5.Text);
         }
@@ -436,7 +430,6 @@ namespace Montecarlo
 
         private void tomarParametrosExponencialActividad1()
         {
-            if (double.Parse(mediaExponencialActividad1.Text) <= 0) { return; }
             mediaExponencialAct1 = double.Parse(mediaExponencialActividad1.Text);
         }
         private void tomarParametrosExponencialActividad2()
@@ -463,34 +456,166 @@ namespace Montecarlo
 
         private void tomarParametrosNormalActividad1()
         {
-            if (double.Parse(mediaNormalActividad1.Text) <= 0 || double.Parse(desvActividad1.Text) <= 0) { return; }
             mediaNormalAct1 = double.Parse(mediaNormalActividad1.Text);
             desvAct1 = double.Parse(desvActividad1.Text);
-        
         }
         private void tomarParametrosNormalActividad2()
         {
-            if (double.Parse(mediaNormalActividad2.Text) <= 0 || double.Parse(desvActividad2.Text) <= 0) { return; }
             mediaNormalAct2 = double.Parse(mediaNormalActividad2.Text);
             desvAct2 = double.Parse(desvActividad2.Text);
         }
         private void tomarParametrosNormalActividad3()
         {
-            if (double.Parse(mediaNormalActividad3.Text) <= 0 || double.Parse(desvActividad3.Text) <= 0) { return; }
             mediaNormalAct3 = double.Parse(mediaNormalActividad3.Text);
             desvAct3 = double.Parse(desvActividad3.Text);
         }
         private void tomarParametrosNormalActividad4()
         {
-            if (double.Parse(mediaNormalActividad4.Text) <= 0 || double.Parse(desvActividad4.Text) <= 0) { return; }
             mediaNormalAct4 = double.Parse(mediaNormalActividad4.Text);
             desvAct4 = double.Parse(desvActividad4.Text);
         }
         private void tomarParametrosNormalActividad5()
         {
-            if (double.Parse(mediaNormalActividad5.Text) <= 0 || double.Parse(desvActividad5.Text) <= 0) { return; }
             mediaNormalAct5 = double.Parse(mediaNormalActividad5.Text);
             desvAct5 = double.Parse(desvActividad5.Text);
+        }
+
+        private Boolean hayErrores()
+        {
+            return sonParametrosValidosActividad1() || sonParametrosValidosActividad2() || sonParametrosValidosActividad3() || sonParametrosValidosActividad4() || sonParametrosValidosActividad5();
+        }
+
+        private Boolean sonParametrosValidosActividad1()
+        {
+            switch (distribucionActividad1)
+            {
+                case "uniforme":
+                    return validarDistribucionUniformeActividad1();
+                case "normal":
+                    return validarDistribucionNormalActividad1();
+                case "exponencial":
+                    return validarDistribucionExponencialActividad1();
+                default:
+                    return false;
+            }
+        }
+
+        private Boolean sonParametrosValidosActividad2()
+        {
+            switch (distribucionActividad2)
+            {
+                case "uniforme":
+                    return validarDistribucionUniformeActividad2();
+                case "normal":
+                    return validarDistribucionNormalActividad2();
+                case "exponencial":
+                    return validarDistribucionExponencialActividad2();
+                default:
+                    return false;
+            }
+        }
+        private Boolean sonParametrosValidosActividad3()
+        {
+            switch (distribucionActividad3)
+            {
+                case "uniforme":
+                    return validarDistribucionUniformeActividad3();
+                case "normal":
+                    return validarDistribucionNormalActividad3();
+                case "exponencial":
+                    return validarDistribucionExponencialActividad3();
+                default:
+                    return false;
+            }
+        }
+        private Boolean sonParametrosValidosActividad4()
+        {
+            switch (distribucionActividad4)
+            {
+                case "uniforme":
+                    return validarDistribucionUniformeActividad4();
+                case "normal":
+                    return validarDistribucionNormalActividad4();
+                case "exponencial":
+                    return validarDistribucionExponencialActividad4();
+                default:
+                    return false;
+            }
+        }
+        private Boolean sonParametrosValidosActividad5()
+        {
+            switch (distribucionActividad5)
+            {
+                case "uniforme":
+                    return validarDistribucionUniformeActividad5();
+                case "normal":
+                    return validarDistribucionNormalActividad5();
+                case "exponencial":
+                    return validarDistribucionExponencialActividad5();
+                default:
+                    return false;
+            }
+        }
+        private Boolean validarDistribucionUniformeActividad1()
+        {
+            return limInferiorAct1 < 0 || limSuperiorAct1 <= 0 || limInferiorAct1 >= limSuperiorAct1;
+        }
+        private Boolean validarDistribucionUniformeActividad2()
+        {
+            return limInferiorAct2 < 0 || limSuperiorAct2 <= 0 || limInferiorAct2 >= limSuperiorAct2;
+        }
+        private Boolean validarDistribucionUniformeActividad3()
+        {
+            return limInferiorAct3 < 0 || limSuperiorAct3 <= 0 || limInferiorAct3 >= limSuperiorAct3;
+        }
+        private Boolean validarDistribucionUniformeActividad4()
+        {
+            return limInferiorAct4 < 0 || limSuperiorAct4 <= 0 || limInferiorAct4 >= limSuperiorAct4;
+        }
+        private Boolean validarDistribucionUniformeActividad5()
+        {
+            return limInferiorAct5 < 0 || limSuperiorAct5 <= 0 || limInferiorAct5 >= limSuperiorAct5;
+        }
+
+        private Boolean validarDistribucionNormalActividad1()
+        {
+            return mediaNormalAct1 <= 0 || desvAct1 <= 0;
+        }
+        private Boolean validarDistribucionNormalActividad2()
+        {
+            return mediaNormalAct2 <= 0 || desvAct2 <= 0;
+        }
+        private Boolean validarDistribucionNormalActividad3()
+        {
+            return mediaNormalAct3 <= 0 || desvAct3 <= 0;
+        }
+        private Boolean validarDistribucionNormalActividad4()
+        {
+            return mediaNormalAct4 <= 0 || desvAct4 <= 0;
+        }
+        private Boolean validarDistribucionNormalActividad5()
+        {
+            return mediaNormalAct5 <= 0 || desvAct5 <= 0;
+        }
+        private Boolean validarDistribucionExponencialActividad1()
+        {
+            return mediaExponencialAct1 <= 0;
+        }
+        private Boolean validarDistribucionExponencialActividad2()
+        {
+            return mediaExponencialAct2 <= 0;
+        }
+        private Boolean validarDistribucionExponencialActividad3()
+        {
+            return mediaExponencialAct3 <= 0;
+        }
+        private Boolean validarDistribucionExponencialActividad4()
+        {
+            return mediaExponencialAct4 <= 0;
+        }
+        private Boolean validarDistribucionExponencialActividad5()
+        {
+            return mediaExponencialAct5 <= 0;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Montecarlo.Soporte;
+using Montecarlo.Soporte.GeneradorAleatorios;
 using Montecarlo.Soporte.Graficador;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,12 @@ namespace Montecarlo
 
         Form1 pantalla;
         private Truncador truncador;
-        private GeneradorLenguaje generadorAleatorios;
+        private GeneradorLenguaje generadorUniformeDelLenguaje;
+        private IGenerador generadorActividad1;
+        private IGenerador generadorActividad2;
+        private IGenerador generadorActividad3;
+        private IGenerador generadorActividad4;
+        private IGenerador generadorActividad5;
         private DataTable tablaRango;
         private DataTable tablaUltimosProyectos;
 
@@ -29,7 +35,7 @@ namespace Montecarlo
             this.lineaAnterior = new double[80];
             this.lineaActual = new double[80];
             this.truncador = new Truncador(2);
-            this.generadorAleatorios = new GeneradorLenguaje(truncador);
+            this.generadorUniformeDelLenguaje = new GeneradorLenguaje(truncador);
             this.tablaRango = new DataTable();
             this.tablaUltimosProyectos = new DataTable();
             this.proyectos = new List<int>();
@@ -124,9 +130,9 @@ namespace Montecarlo
             tabla.Columns.Add("Acum Intervalo 15");//lineaActual[79]
         }
 
-        public void simular(int cantidad,double limInferiorAct1,double limSuperiorAct1,double limInferiorAct2,double limSuperiorAct2,double mediaAct3,double limInferiorAct4,double limSuperiorAct4,double mediaAct5, int desde,int hasta)
+        public void simular(int cantidad, double limInferiorAct1, double limSuperiorAct1, double limInferiorAct2, double limSuperiorAct2, double mediaAct3, double limInferiorAct4, double limSuperiorAct4, double mediaAct5, int desde, int hasta)
         {
-            procesar(cantidad, limInferiorAct1, limSuperiorAct1, limInferiorAct2, limSuperiorAct2, mediaAct3, limInferiorAct4, limSuperiorAct4, mediaAct5, desde,hasta);
+            procesar(cantidad, limInferiorAct1, limSuperiorAct1, limInferiorAct2, limSuperiorAct2, mediaAct3, limInferiorAct4, limSuperiorAct4, mediaAct5, desde, hasta);
             mostrarRango();
             graficarTiempoPromedio();
         }
@@ -216,35 +222,35 @@ namespace Montecarlo
                 proyectos.Add(proyecto);
 
                 //RND de la actividad 1
-                rnd1 = generadorAleatorios.obtenerAleatorio();
+                rnd1 = generadorActividad1.obtenerAleatorio();
                 lineaActual[1] = rnd1;
                 //Duración de la actividad 1
                 duracionActividad1 = limInferiorAct1 + (limSuperiorAct1 - limInferiorAct1) * rnd1;
                 lineaActual[2] = duracionActividad1;
 
                 //RND de la actividad 2
-                rnd2 = generadorAleatorios.obtenerAleatorio();
+                rnd2 = generadorActividad2.obtenerAleatorio();
                 lineaActual[3] = rnd2;
                 //Duración de la actividad 2
                 duracionActividad2 = limInferiorAct2 + (limSuperiorAct2 - limInferiorAct2) * rnd2;
                 lineaActual[4] = duracionActividad2;
 
                 //RND de la actividad 3
-                rnd3 = generadorAleatorios.obtenerAleatorio();
+                rnd3 = generadorActividad3.obtenerAleatorio();
                 lineaActual[5] = rnd3;
                 //Duración  de la actividad 3
                 duracionActividad3 = -mediaAct3 * Math.Log(1 - rnd3);
                 lineaActual[6] = duracionActividad3;
 
                 //RND de la actividad 4
-                rnd4 = generadorAleatorios.obtenerAleatorio();
+                rnd4 = generadorActividad4.obtenerAleatorio();
                 lineaActual[7] = rnd4;
                 //Duración de la actividad 4
                 duracionActividad4 = limInferiorAct4 + (limSuperiorAct4 - limInferiorAct4) * rnd4;
                 lineaActual[8] = duracionActividad4;
 
                 //RND de la actividad 5
-                rnd5 = generadorAleatorios.obtenerAleatorio();
+                rnd5 = generadorActividad5.obtenerAleatorio();
                 lineaActual[9] = rnd5;
 
                 //Duración de la actividad 5
@@ -277,7 +283,7 @@ namespace Montecarlo
                 }
 
                 //Tiempo promedio
-                tiempoPromedio = ((i-1) * lineaAnterior[16] + caminoCritico)/i;
+                tiempoPromedio = ((i - 1) * lineaAnterior[16] + caminoCritico) / i;
                 lineaActual[16] = tiempoPromedio;
                 tiemposPromiedos.Add(tiempoPromedio);
 
@@ -318,7 +324,7 @@ namespace Montecarlo
 
 
                 //Fecha a fijar con una confianza del 90%
-                lineaActual[23] = TablaStudent.obtenerFechaAFijar(i,tiempoPromedio,desviacion);//HACER
+                lineaActual[23] = TablaStudent.obtenerFechaAFijar(i, tiempoPromedio, desviacion);//HACER
 
                 //Inicios más tardios de las actividades
                 inicioTardioA5 = caminoCritico - duracionActividad5;
@@ -332,7 +338,7 @@ namespace Montecarlo
                 lineaActual[26] = inicioTardioA3;
                 lineaActual[27] = inicioTardioA2;
                 lineaActual[28] = inicioTardioA1;
-                
+
                 //Probabilidades que las actividades sean críticas
                 if (caminoCritico == camino1)
                 {
@@ -357,7 +363,7 @@ namespace Montecarlo
 
                 //Formación de intervalos,Actualización de contadores y cálculo de probabilidades
                 if (i < 15) { intervalos.Add(caminoCritico); }
-                if (i==14) { intervalos.Sort(); }
+                if (i == 14) { intervalos.Sort(); }
                 if (i > 14)
                 {
                     lineaActual[34] = 0;
@@ -377,7 +383,7 @@ namespace Montecarlo
                     lineaActual[48] = intervalos[13];
                     lineaActual[49] = 99999;
 
-                    contadorIntervalo1 = contar(caminoCritico,lineaActual[34],lineaActual[35],contadorIntervalo1);
+                    contadorIntervalo1 = contar(caminoCritico, lineaActual[34], lineaActual[35], contadorIntervalo1);
                     contadorIntervalo2 = contar(caminoCritico, lineaActual[35], lineaActual[36], contadorIntervalo2);
                     contadorIntervalo3 = contar(caminoCritico, lineaActual[36], lineaActual[37], contadorIntervalo3);
                     contadorIntervalo4 = contar(caminoCritico, lineaActual[37], lineaActual[38], contadorIntervalo4);
@@ -459,7 +465,7 @@ namespace Montecarlo
 
 
                 //Arma la tabla que tiene los 2 últimos proyectos
-                if (i >= cantidad-1)
+                if (i >= cantidad - 1)
                 {
                     row = tablaUltimosProyectos.NewRow();
                     for (int j = 0; j < lineaActual.Length; j++)
@@ -495,13 +501,13 @@ namespace Montecarlo
         }
         private void mostrarRango()
         {
-            pantalla.mostrarRango(tablaRango,tablaUltimosProyectos);
+            pantalla.mostrarRango(tablaRango, tablaUltimosProyectos);
         }
 
 
         private double contar(double num, double limInferior, double limSuperior, double contador)
         {
-            if(num < limSuperior && num >= limInferior) { return contador + 1; }
+            if (num < limSuperior && num >= limInferior) { return contador + 1; }
             return contador;
         }
 
@@ -512,5 +518,109 @@ namespace Montecarlo
             graficador.tiemposPromedios = this.tiemposPromiedos.ToArray();
             graficador.Show();
         }
+
+        // actividad 1
+        private void tomarDistribucionUniformeActividad1(int extremoInferior, int extremoSuperior)
+        {
+            this.generadorActividad1 = new GeneradorUniformeAB(generadorUniformeDelLenguaje, extremoInferior, extremoSuperior);
+        }
+
+        private void tomarDistribucionExponencialActividad1(double mediaExponencial)
+        {
+            this.generadorActividad1 = new GeneradorExponencialNegativa(generadorUniformeDelLenguaje, mediaExponencial);
+        }
+
+        private void tomarDistribucionNormalActividad1(double mediaNormal, double desviacionNormal)
+        {
+            this.generadorActividad1 = new GeneradorNormal(generadorUniformeDelLenguaje, mediaNormal, desviacionNormal);
+        }
+
+        // actividad 2 
+
+        private void tomarDistribucionUniformeActividad2(int extremoInferior, int extremoSuperior)
+        {
+            this.generadorActividad2 = new GeneradorUniformeAB(generadorUniformeDelLenguaje, extremoInferior, extremoSuperior);
+        }
+
+        private void tomarDistribucionExponencialActividad2(double mediaExponencial)
+        {
+            this.generadorActividad2 = new GeneradorExponencialNegativa(generadorUniformeDelLenguaje, mediaExponencial);
+        }
+
+        private void tomarDistribucionNormalActividad2(double mediaNormal, double desviacionNormal)
+        {
+            this.generadorActividad2 = new GeneradorNormal(generadorUniformeDelLenguaje, mediaNormal, desviacionNormal);
+        }
+
+
+        // actividad 3
+
+        private void tomarDistribucionUniformeActividad3(int extremoInferior, int extremoSuperior)
+        {
+            this.generadorActividad3 = new GeneradorUniformeAB(generadorUniformeDelLenguaje, extremoInferior, extremoSuperior);
+        }
+
+        private void tomarDistribucionExponencialActividad3(double mediaExponencial)
+        {
+            this.generadorActividad3 = new GeneradorExponencialNegativa(generadorUniformeDelLenguaje, mediaExponencial);
+        }
+
+        private void tomarDistribucionNormalActividad3(double mediaNormal, double desviacionNormal)
+        {
+            this.generadorActividad3 = new GeneradorNormal(generadorUniformeDelLenguaje, mediaNormal, desviacionNormal);
+        }
+
+        // actividad 4
+
+        private void tomarDistribucionUniformeActividad4(int extremoInferior, int extremoSuperior)
+        {
+            this.generadorActividad4 = new GeneradorUniformeAB(generadorUniformeDelLenguaje, extremoInferior, extremoSuperior);
+        }
+
+        private void tomarDistribucionExponencialActividad4(double mediaExponencial)
+        {
+            this.generadorActividad4 = new GeneradorExponencialNegativa(generadorUniformeDelLenguaje, mediaExponencial);
+        }
+
+        private void tomarDistribucionNormalActividad4(double mediaNormal, double desviacionNormal)
+        {
+            this.generadorActividad4 = new GeneradorNormal(generadorUniformeDelLenguaje, mediaNormal, desviacionNormal);
+        }
+
+        // actividad 5
+
+        private void tomarDistribucionUniformeActividad5(int extremoInferior, int extremoSuperior)
+        {
+            this.generadorActividad4 = new GeneradorUniformeAB(generadorUniformeDelLenguaje, extremoInferior, extremoSuperior);
+        }
+
+        private void tomarDistribucionExponencialActividad5(double mediaExponencial)
+        {
+            this.generadorActividad4 = new GeneradorExponencialNegativa(generadorUniformeDelLenguaje, mediaExponencial);
+        }
+
+        private void tomarDistribucionNormalActividad5(double mediaNormal, double desviacionNormal)
+        {
+            this.generadorActividad4 = new GeneradorNormal(generadorUniformeDelLenguaje, mediaNormal, desviacionNormal);
+        }
+
+        /*
+        private void tomarDistribucionActividad1()
+        {
+            switch (distribucionActividad1) // switch el valor del combo
+            {
+                case "uniforme":
+                    this.tomarParametrosUniformeActividad1() // toma los parametros de la distribución // los ingresa el usuario
+                    gestor.tomarDistribucionUniformeActividad1(parametros); // asigna la distribucion al gestor
+                    break;
+                case "exponencial":
+                    gestor.tomarDistribucionExponencialActividad1(parametros);
+                    break;
+                case ""exponencial":
+                    gestor.tomarDistribucionNormalActividad1(parametros);
+                    break;
+            }
+        }
+        */
     }
 }
